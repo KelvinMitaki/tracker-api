@@ -2,7 +2,7 @@ import { Router } from "express";
 import { check } from "express-validator";
 import { validate } from "../middlewares/validation";
 import bcrypt from "bcrypt";
-import { User } from "../models/User";
+import { User, UserDoc } from "../models/User";
 import jwt from "jsonwebtoken";
 
 const router = Router();
@@ -33,7 +33,36 @@ router.post(
       const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET!);
       res.send({ token });
     } catch (error) {
-      res.status(501).send({ message: error });
+      res.status(500).send({ message: error });
+    }
+  }
+);
+
+router.post(
+  "/signin",
+  check("email").trim().isEmail().withMessage("enter a valid email"),
+  check("password")
+    .trim()
+    .isLength({ min: 6 })
+    .withMessage("password must be six characters min"),
+  validate,
+  async (req, res) => {
+    try {
+      const { email, password } = req.body as { [key: string]: string };
+      const user = (await User.findOne({
+        email: email.toLowerCase()
+      })) as UserDoc | null;
+      if (!user) {
+        return res.status(401).send({ message: "Invalid email or password" });
+      }
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(401).send({ message: "Invalid email or password" });
+      }
+      const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET!);
+      res.send({ token });
+    } catch (error) {
+      res.status(500).send({ message: error });
     }
   }
 );
