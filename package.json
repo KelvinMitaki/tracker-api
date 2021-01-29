@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.ts"
+    "dev": "env-cmd -f ./config/keys.env nodemon index.ts"
   },
   "keywords": [],
   "author": "",
@@ -12,6 +12,7 @@
   "dependencies": {
     "@types/express": "^4.17.11",
     "@types/mongoose": "^5.10.3",
+    "env-cmd": "^10.1.0",
     "express": "^4.17.1",
     "mongoose": "^5.11.13",
     "typescript": "^4.1.3"
