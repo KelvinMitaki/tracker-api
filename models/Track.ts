@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-interface TrackAttrs {
+export interface TrackAttrs {
   user: string;
   name?: string;
   locations: {
