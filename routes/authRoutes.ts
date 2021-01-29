@@ -3,6 +3,7 @@ import { check } from "express-validator";
 import { validate } from "../middlewares/validation";
 import bcrypt from "bcrypt";
 import { User } from "../models/User";
+import jwt from "jsonwebtoken";
 
 const router = Router();
 
@@ -29,7 +30,8 @@ router.post(
         password: hashedPassword
       });
       await user.save();
-      res.send(user);
+      const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET!);
+      res.send({ token });
     } catch (error) {
       res.status(501).send({ message: error });
     }
