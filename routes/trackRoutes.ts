@@ -7,7 +7,9 @@ const router = Router();
 
 router.get("/tracks", isAuth, async (req: Request, res: Response) => {
   try {
-    const tracks = await Track.find({ user: req.user?._id });
+    const tracks = await Track.find({ user: req.user!._id }, null, {
+      limit: 20
+    });
     res.send(tracks);
   } catch (error) {
     res.status(500).send({ message: error });
